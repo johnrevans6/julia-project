@@ -8,7 +8,7 @@ function parse_json(fn)
 
   #Read in the first 5000 datapoints. This can be increased to about 100000
   #before performance becomes a factor
-  chunk_size = 10000
+  chunk_size = 1000000
   chunk_length = 2
   data_set = []
 
