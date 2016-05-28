@@ -35,6 +35,8 @@ function parse_json(fn)
   return df
 end
 
+
+
 ###Sample usage###
 #df = parse_json("D:\\datasets\\reddit\\RC_2012-01.json")
 #print(df[10000,:])

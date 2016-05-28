@@ -40,3 +40,24 @@ function calculate_scores(df)
    return scores
 
 end
+
+function fill_missing(df)
+  groups = groupby(df,:author)
+  sr = unique(df[:subreddit])
+  all_subs = DataFrame(author="",subreddit="",passion_score=0.0);
+  for i=1:length(groups)
+    cpy = sr
+
+    slice = groups[i];
+    idx = findin(slice[:subreddit],cpy)
+    dif = DataFrame(subreddit=cpy)
+    deleterows!(dif,idx)
+    hack = ASCIIString[string(x) for x in dif[:subreddit]]
+    auth = fill!(Array(ASCIIString,nrow(dif)),slice[:author][1])
+    tmp = DataFrame(author=auth,subreddit=hack,passion_score=0.0)
+    append!(all_subs,slice)
+    append!(all_subs,tmp)
+  end
+  deleterows!(all_subs,1)
+  return all_subs
+end
