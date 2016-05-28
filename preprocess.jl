@@ -42,22 +42,47 @@ function calculate_scores(df)
 end
 
 function fill_missing(df)
+  #group the datafram into authors
   groups = groupby(df,:author)
+  #find the unique subreddits in the dataframe
   sr = unique(df[:subreddit])
+
   all_subs = DataFrame(author="",subreddit="",passion_score=0.0);
+
   for i=1:length(groups)
+    #copy the subreddits so I don't need to call unique on each iteration
     cpy = sr
 
+    #grab a slice containing a given author
     slice = groups[i];
+
+    #find the indexes of subreddits already observed by the other.
+    #These have already been scored and should not be appended
     idx = findin(slice[:subreddit],cpy)
+
+    #convert the copy into a df and delete the subreddits already observed
+    #result is a dif
     dif = DataFrame(subreddit=cpy)
     deleterows!(dif,idx)
+
+    #convert the dif into an array of ASCIIStrings
+    #TODO: this hacky, find a better way
     hack = ASCIIString[string(x) for x in dif[:subreddit]]
+
+    #create ASCIIString array that pads the author column
     auth = fill!(Array(ASCIIString,nrow(dif)),slice[:author][1])
+
+    #create a temporary df and assign author, subreddit and scores
     tmp = DataFrame(author=auth,subreddit=hack,passion_score=0.0)
+
+    #append the original slice
     append!(all_subs,slice)
+
+    #append the missing values
     append!(all_subs,tmp)
   end
+
+  #delete the first row since it's blank and return the full df
   deleterows!(all_subs,1)
   return all_subs
 end
